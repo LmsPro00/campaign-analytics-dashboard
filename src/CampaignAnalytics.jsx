@@ -214,13 +214,7 @@ const CampaignAnalytics = () => {
             </div>
             <div className="flex items-center gap-3">
               <button
-                onClick={() => {
-                  console.log('Click su Aggrega i dati');
-                  console.log('Campagne disponibili:', Object.keys(campaigns));
-                  console.log('showAggregateModal prima:', showAggregateModal);
-                  setShowAggregateModal(true);
-                  console.log('showAggregateModal dopo:', showAggregateModal);
-                }}
+                onClick={() => setShowAggregateModal(true)}
                 type="button"
                 className="flex items-center gap-2 px-4 py-2 text-sm bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
               >
@@ -566,19 +560,27 @@ const CampaignAnalytics = () => {
             position: 'fixed',
             top: 0,
             left: 0,
-            right: 0,
-            bottom: 0,
+            width: '100vw',
+            height: '100vh',
             zIndex: 999999,
-            backgroundColor: 'rgba(0, 0, 0, 0.75)',
+            backgroundColor: 'rgba(0, 0, 0, 0.85)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            padding: '1rem'
+            padding: '1rem',
+            overflow: 'auto'
           }}
         >
           <div 
-            className="bg-white rounded-2xl shadow-xl w-full overflow-y-auto"
-            style={{ maxWidth: '42rem', maxHeight: '90vh' }}
+            style={{ 
+              backgroundColor: 'white',
+              borderRadius: '1rem',
+              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+              width: '100%',
+              maxWidth: '42rem',
+              maxHeight: '90vh',
+              overflow: 'auto'
+            }}
           >
             <div className="p-6 border-b border-gray-200 flex items-center justify-between">
               <div className="flex items-center gap-3">
