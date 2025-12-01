@@ -375,13 +375,17 @@ const CampaignAnalytics = () => {
                       const isGood = lowerIsBetter ? isNegative : isPositive;
                       const isBad = lowerIsBetter ? isPositive : isNegative;
                       
+                      let deltaColorClass = 'text-gray-400';
+                      if (isGood) deltaColorClass = 'text-green-600';
+                      if (isBad) deltaColorClass = 'text-red-600';
+                      
                       return (
                         <div className={`${highlight ? 'bg-blue-50' : ''} rounded-md p-3`}>
                           <div className="text-xs text-gray-500 mb-1">{label}</div>
                           <div className="flex items-baseline gap-1.5">
                             <span className="text-lg font-medium text-gray-900">{value}{unit}</span>
                             {delta !== null && (
-                              <span className={`text-xs flex items-center gap-0.5 ${isGood ? 'text-green-600' : isBad ? 'text-red-600' : 'text-gray-400'}`}>
+                              <span className={`text-xs flex items-center gap-0.5 ${deltaColorClass}`}>
                                 {isPositive ? <TrendingUp size={12} /> : isNegative ? <TrendingDown size={12} /> : null}
                                 {isPositive ? '+' : ''}{delta}%
                               </span>
