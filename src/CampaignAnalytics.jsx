@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { PlusCircle, TrendingUp, TrendingDown, Calendar, BarChart3, Download, Sparkles, Trash2, X, Layers } from 'lucide-react';
+import { db } from './firebase';
+import { collection, doc, setDoc, onSnapshot, deleteDoc } from 'firebase/firestore';
 
 const CampaignAnalytics = () => {
   const [campaigns, setCampaigns] = useState({});
@@ -27,47 +29,44 @@ const CampaignAnalytics = () => {
     cpc: ''
   });
 
+  // Carica dati da Firestore in real-time
   useEffect(() => {
-    const saved = localStorage.getItem('marketingCampaigns');
-    if (saved) {
-      const parsed = JSON.parse(saved);
-      setCampaigns(parsed);
-      if (Object.keys(parsed).length > 0) {
-        setSelectedCampaign(Object.keys(parsed)[0]);
-      }
-    }
+    const unsubscribe = onSnapshot(collection(db, 'campaigns'), (snapshot) => {
+      const campaignsData = {};
+      snapshot.forEach((doc) => {
+        campaignsData[doc.id] = doc.data().weeks || [];
+      });
+      setCampaigns(campaignsData);
+    });
+
+    return () => unsubscribe();
   }, []);
 
   useEffect(() => {
     if (Object.keys(campaigns).length > 0) {
-      localStorage.setItem('marketingCampaigns', JSON.stringify(campaigns));
+      setSelectedCampaign(Object.keys(campaigns)[0]);
     }
   }, [campaigns]);
 
-  const addNewCampaign = () => {
+  const addNewCampaign = async () => {
     if (newCampaignName.trim()) {
-      setCampaigns({
-        ...campaigns,
-        [newCampaignName]: []
-      });
+      await setDoc(doc(db, 'campaigns', newCampaignName), { weeks: [] });
       setSelectedCampaign(newCampaignName);
       setNewCampaignName('');
       setShowNewCampaignInput(false);
     }
   };
 
-  const deleteCampaign = (campaignName) => {
+  const deleteCampaign = async (campaignName) => {
     if (window.confirm(`Sei sicuro di voler eliminare la campagna "${campaignName}" e tutto il suo storico?`)) {
-      const newCampaigns = { ...campaigns };
-      delete newCampaigns[campaignName];
-      setCampaigns(newCampaigns);
+      await deleteDoc(doc(db, 'campaigns', campaignName));
       if (selectedCampaign === campaignName) {
         setSelectedCampaign('');
       }
     }
   };
 
-  const aggregateData = () => {
+  const aggregateData = async () => {
     if (aggregateConfig.selectedCampaigns.length === 0 || !aggregateConfig.name || !aggregateConfig.period) {
       alert('Compila tutti i campi per creare l\'aggregazione');
       return;
@@ -127,19 +126,16 @@ const CampaignAnalytics = () => {
       sourceCampaigns: aggregateConfig.selectedCampaigns
     };
 
-    // Salva come nuova campagna
+    // Salva come nuova campagna su Firestore
     const aggregateName = `📊 ${aggregateConfig.name}`;
-    setCampaigns({
-      ...campaigns,
-      [aggregateName]: [aggregatedWeek]
-    });
+    await setDoc(doc(db, 'campaigns', aggregateName), { weeks: [aggregatedWeek] });
 
     setSelectedCampaign(aggregateName);
     setShowAggregateModal(false);
     setAggregateConfig({ name: '', period: '', selectedCampaigns: [] });
   };
 
-  const addWeekData = () => {
+  const addWeekData = async () => {
     if (!selectedCampaign) return;
     
     // Calcoli automatici
@@ -165,10 +161,9 @@ const CampaignAnalytics = () => {
       appointmentRate
     };
     
-    setCampaigns({
-      ...campaigns,
-      [selectedCampaign]: [...campaigns[selectedCampaign], newWeek]
-    });
+    // Salva su Firestore
+    const updatedWeeks = [...campaigns[selectedCampaign], newWeek];
+    await setDoc(doc(db, 'campaigns', selectedCampaign), { weeks: updatedWeeks });
     
     setWeekData({
       weekReference: '',
