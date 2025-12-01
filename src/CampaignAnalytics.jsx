@@ -214,10 +214,14 @@ const CampaignAnalytics = () => {
             </div>
             <div className="flex items-center gap-3">
               <button
-                onClick={() => {
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  alert('Pulsante cliccato!');
                   console.log('Apertura modale aggregazione');
                   setShowAggregateModal(true);
                 }}
+                type="button"
                 className="flex items-center gap-2 px-4 py-2 text-sm bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
               >
                 <Layers size={16} />
