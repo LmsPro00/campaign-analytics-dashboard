@@ -201,8 +201,6 @@ const CampaignAnalytics = () => {
     link.click();
   };
 
-  console.log('showAggregateModal:', showAggregateModal);
-
   return (
     <>
       <div className="min-h-screen bg-gray-50">
@@ -215,13 +213,7 @@ const CampaignAnalytics = () => {
             </div>
             <div className="flex items-center gap-3">
               <button
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  alert('Pulsante cliccato!');
-                  console.log('Apertura modale aggregazione');
-                  setShowAggregateModal(true);
-                }}
+                onClick={() => setShowAggregateModal(true)}
                 type="button"
                 className="flex items-center gap-2 px-4 py-2 text-sm bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
               >
@@ -561,9 +553,108 @@ const CampaignAnalytics = () => {
       {showAggregateModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4" style={{ zIndex: 9999 }}>
           <div className="bg-white rounded-2xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-6 border-b border-gray-200">
-              <h2 className="text-xl font-semibold">TEST MODALE</h2>
-              <button onClick={() => setShowAggregateModal(false)}>CHIUDI</button>
+            <div className="p-6 border-b border-gray-200 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <Layers className="text-purple-600" size={24} />
+                <h2 className="text-xl font-semibold text-gray-900">Aggrega Dati Campagne</h2>
+              </div>
+              <button
+                onClick={() => setShowAggregateModal(false)}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <X size={24} />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-6">
+              <div>
+                <label className="block text-sm font-normal text-gray-600 mb-2">
+                  Nome Aggregazione
+                </label>
+                <input
+                  type="text"
+                  value={aggregateConfig.name}
+                  onChange={(e) => setAggregateConfig({...aggregateConfig, name: e.target.value})}
+                  placeholder="es. Q4 2024"
+                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-purple-400 focus:border-purple-400 text-gray-700 placeholder-gray-400"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-normal text-gray-600 mb-2">
+                  Periodo di Riferimento
+                </label>
+                <input
+                  type="text"
+                  value={aggregateConfig.period}
+                  onChange={(e) => setAggregateConfig({...aggregateConfig, period: e.target.value})}
+                  placeholder="es. Ottobre - Dicembre 2024"
+                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-purple-400 focus:border-purple-400 text-gray-700 placeholder-gray-400"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-normal text-gray-600 mb-3">
+                  Seleziona Campagne da Aggregare
+                </label>
+                <div className="space-y-2 max-h-60 overflow-y-auto border border-gray-200 rounded-xl p-4">
+                  {Object.keys(campaigns).filter(name => !name.startsWith('📊')).map(campName => (
+                    <label key={campName} className="flex items-center gap-3 p-3 hover:bg-gray-50 rounded-lg cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={aggregateConfig.selectedCampaigns.includes(campName)}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setAggregateConfig({
+                              ...aggregateConfig,
+                              selectedCampaigns: [...aggregateConfig.selectedCampaigns, campName]
+                            });
+                          } else {
+                            setAggregateConfig({
+                              ...aggregateConfig,
+                              selectedCampaigns: aggregateConfig.selectedCampaigns.filter(c => c !== campName)
+                            });
+                          }
+                        }}
+                        className="w-4 h-4 text-purple-600 rounded focus:ring-purple-500"
+                      />
+                      <span className="text-sm text-gray-700">{campName}</span>
+                      <span className="text-xs text-gray-400 ml-auto">
+                        {campaigns[campName].length} settiman{campaigns[campName].length === 1 ? 'a' : 'e'}
+                      </span>
+                    </label>
+                  ))}
+                </div>
+                <p className="text-xs text-gray-500 mt-2">
+                  {aggregateConfig.selectedCampaigns.length} campagn{aggregateConfig.selectedCampaigns.length === 1 ? 'a' : 'e'} selezionat{aggregateConfig.selectedCampaigns.length === 1 ? 'a' : 'e'}
+                </p>
+              </div>
+
+              <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
+                <p className="text-sm text-blue-800">
+                  <strong>Come funziona:</strong><br/>
+                  • <strong>SOMMA:</strong> Budget, Click, Lead, Lead Unici, Appuntamenti, Visualizzazioni Landing<br/>
+                  • <strong>MEDIA:</strong> CTR, CPC, CPL, CPL Unico, CR Landing, Tasso Presa App<br/>
+                  • <strong>CALCOLO:</strong> Costo/App (Budget totale / Appuntamenti totali)<br/>
+                  Verrà creata una nuova campagna consultabile come le altre.
+                </p>
+              </div>
+            </div>
+
+            <div className="p-6 border-t border-gray-200 flex gap-3">
+              <button
+                onClick={() => setShowAggregateModal(false)}
+                className="flex-1 px-4 py-3 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-colors"
+              >
+                Annulla
+              </button>
+              <button
+                onClick={aggregateData}
+                className="flex-1 px-4 py-3 bg-purple-600 text-white rounded-xl hover:bg-purple-700 transition-colors flex items-center justify-center gap-2"
+              >
+                <Layers size={18} />
+                Crea Aggregazione
+              </button>
             </div>
           </div>
         </div>
