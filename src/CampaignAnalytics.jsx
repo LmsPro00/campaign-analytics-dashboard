@@ -551,8 +551,17 @@ const CampaignAnalytics = () => {
 
       {/* Modale Aggregazione */}
       {showAggregateModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4" style={{ zIndex: 9999 }}>
-          <div className="bg-white rounded-2xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+        <div 
+          className="fixed inset-0 flex items-center justify-center p-4" 
+          style={{ 
+            zIndex: 9999,
+            backgroundColor: 'rgba(0, 0, 0, 0.5)'
+          }}
+        >
+          <div 
+            className="bg-white rounded-2xl shadow-xl w-full overflow-y-auto"
+            style={{ maxWidth: '42rem', maxHeight: '90vh' }}
+          >
             <div className="p-6 border-b border-gray-200 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <Layers className="text-purple-600" size={24} />
