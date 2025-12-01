@@ -85,7 +85,7 @@ const CampaignAnalytics = () => {
       return;
     }
 
-    // Calcola aggregazioni
+    // Calcola aggregazioni - SOMME
     const totalBudget = allWeeks.reduce((sum, w) => sum + parseFloat(w.budget || 0), 0);
     const totalClicks = allWeeks.reduce((sum, w) => sum + parseFloat(w.clicks || 0), 0);
     const totalLandingViews = allWeeks.reduce((sum, w) => sum + parseFloat(w.landingViews || 0), 0);
@@ -93,16 +93,16 @@ const CampaignAnalytics = () => {
     const totalUniqueLeads = allWeeks.reduce((sum, w) => sum + parseFloat(w.uniqueLeads || 0), 0);
     const totalAppointments = allWeeks.reduce((sum, w) => sum + parseFloat(w.appointments || 0), 0);
 
-    // Medie
+    // Medie - CTR, CPC, CPL, CPL Unico, CR Landing, Tasso Presa App
     const avgCTR = (allWeeks.reduce((sum, w) => sum + parseFloat(w.ctr || 0), 0) / allWeeks.length).toFixed(2);
     const avgCPC = (allWeeks.reduce((sum, w) => sum + parseFloat(w.cpc || 0), 0) / allWeeks.length).toFixed(2);
+    const avgCPL = (allWeeks.reduce((sum, w) => sum + parseFloat(w.costPerLead || 0), 0) / allWeeks.length).toFixed(2);
+    const avgCPLUnique = (allWeeks.reduce((sum, w) => sum + parseFloat(w.costPerUniqueLead || 0), 0) / allWeeks.length).toFixed(2);
+    const avgCRLanding = (allWeeks.reduce((sum, w) => sum + parseFloat(w.crLanding || 0), 0) / allWeeks.length).toFixed(2);
+    const avgAppointmentRate = (allWeeks.reduce((sum, w) => sum + parseFloat(w.appointmentRate || 0), 0) / allWeeks.length).toFixed(2);
 
-    // Calcoli derivati
-    const costPerLead = totalLeads > 0 ? (totalBudget / totalLeads).toFixed(2) : '0.00';
-    const costPerUniqueLead = totalUniqueLeads > 0 ? (totalBudget / totalUniqueLeads).toFixed(2) : '0.00';
+    // Costo/App calcolato dai totali
     const costPerAppointment = totalAppointments > 0 ? (totalBudget / totalAppointments).toFixed(2) : '0.00';
-    const crLanding = totalLandingViews > 0 ? ((totalLeads / totalLandingViews) * 100).toFixed(2) : '0.00';
-    const appointmentRate = totalLeads > 0 ? ((totalAppointments / totalLeads) * 100).toFixed(2) : '0.00';
 
     // Crea la campagna aggregata
     const aggregatedWeek = {
@@ -117,11 +117,11 @@ const CampaignAnalytics = () => {
       leads: totalLeads.toString(),
       uniqueLeads: totalUniqueLeads.toString(),
       appointments: totalAppointments.toString(),
-      costPerLead,
-      costPerUniqueLead,
+      costPerLead: avgCPL,
+      costPerUniqueLead: avgCPLUnique,
       costPerAppointment,
-      crLanding,
-      appointmentRate,
+      crLanding: avgCRLanding,
+      appointmentRate: avgAppointmentRate,
       isAggregated: true,
       sourceCampaigns: aggregateConfig.selectedCampaigns
     };
@@ -629,9 +629,11 @@ const CampaignAnalytics = () => {
 
               <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
                 <p className="text-sm text-blue-800">
-                  <strong>Come funziona:</strong> I dati verranno aggregati sommando Budget, Click, Lead, ecc. 
-                  Le metriche percentuali (CTR, CPC) verranno calcolate come media. 
-                  Verrà creata una nuova campagna con tutti i dati aggregati consultabile come le altre.
+                  <strong>Come funziona:</strong><br/>
+                  • <strong>SOMMA:</strong> Budget, Click, Lead, Lead Unici, Appuntamenti, Visualizzazioni Landing<br/>
+                  • <strong>MEDIA:</strong> CTR, CPC, CPL, CPL Unico, CR Landing, Tasso Presa App<br/>
+                  • <strong>CALCOLO:</strong> Costo/App (Budget totale / Appuntamenti totali)<br/>
+                  Verrà creata una nuova campagna consultabile come le altre.
                 </p>
               </div>
             </div>
