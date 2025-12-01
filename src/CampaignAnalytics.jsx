@@ -42,10 +42,12 @@ const CampaignAnalytics = () => {
   }, []);
 
   // Carica dati da Firestore in real-time (solo se autenticato)
+  // Ogni utente vede solo i suoi dati
   useEffect(() => {
     if (!user) return;
     
-    const unsubscribe = onSnapshot(collection(db, 'campaigns'), (snapshot) => {
+    const userCampaignsPath = `users/${user.email}/campaigns`;
+    const unsubscribe = onSnapshot(collection(db, userCampaignsPath), (snapshot) => {
       const campaignsData = {};
       snapshot.forEach((doc) => {
         campaignsData[doc.id] = doc.data().weeks || [];
@@ -80,8 +82,9 @@ const CampaignAnalytics = () => {
   };
 
   const addNewCampaign = async () => {
-    if (newCampaignName.trim()) {
-      await setDoc(doc(db, 'campaigns', newCampaignName), { weeks: [] });
+    if (newCampaignName.trim() && user) {
+      const userCampaignsPath = `users/${user.email}/campaigns`;
+      await setDoc(doc(db, userCampaignsPath, newCampaignName), { weeks: [] });
       setSelectedCampaign(newCampaignName);
       setNewCampaignName('');
       setShowNewCampaignInput(false);
@@ -89,8 +92,9 @@ const CampaignAnalytics = () => {
   };
 
   const deleteCampaign = async (campaignName) => {
-    if (window.confirm(`Sei sicuro di voler eliminare la campagna "${campaignName}" e tutto il suo storico?`)) {
-      await deleteDoc(doc(db, 'campaigns', campaignName));
+    if (window.confirm(`Sei sicuro di voler eliminare la campagna "${campaignName}" e tutto il suo storico?`) && user) {
+      const userCampaignsPath = `users/${user.email}/campaigns`;
+      await deleteDoc(doc(db, userCampaignsPath, campaignName));
       if (selectedCampaign === campaignName) {
         setSelectedCampaign('');
       }
@@ -157,9 +161,12 @@ const CampaignAnalytics = () => {
       sourceCampaigns: aggregateConfig.selectedCampaigns
     };
 
-    // Salva come nuova campagna su Firestore
+    // Salva come nuova campagna su Firestore (nel workspace dell'utente)
     const aggregateName = `📊 ${aggregateConfig.name}`;
-    await setDoc(doc(db, 'campaigns', aggregateName), { weeks: [aggregatedWeek] });
+    if (user) {
+      const userCampaignsPath = `users/${user.email}/campaigns`;
+      await setDoc(doc(db, userCampaignsPath, aggregateName), { weeks: [aggregatedWeek] });
+    }
 
     setSelectedCampaign(aggregateName);
     setShowAggregateModal(false);
@@ -192,9 +199,12 @@ const CampaignAnalytics = () => {
       appointmentRate
     };
     
-    // Salva su Firestore
+    // Salva su Firestore (nel workspace dell'utente)
     const updatedWeeks = [...campaigns[selectedCampaign], newWeek];
-    await setDoc(doc(db, 'campaigns', selectedCampaign), { weeks: updatedWeeks });
+    if (user) {
+      const userCampaignsPath = `users/${user.email}/campaigns`;
+      await setDoc(doc(db, userCampaignsPath, selectedCampaign), { weeks: updatedWeeks });
+    }
     
     setWeekData({
       weekReference: '',
