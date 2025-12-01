@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { PlusCircle, TrendingUp, TrendingDown, Calendar, BarChart3, Download, Sparkles } from 'lucide-react';
+import { PlusCircle, TrendingUp, TrendingDown, Calendar, BarChart3, Download, Sparkles, Trash2 } from 'lucide-react';
 
 const CampaignAnalytics = () => {
   const [campaigns, setCampaigns] = useState({});
@@ -38,7 +38,7 @@ const CampaignAnalytics = () => {
   }, [campaigns]);
 
   const addNewCampaign = () => {
-    if (newCampaignName.trim() && !campaigns[newCampaignName]) {
+    if (newCampaignName.trim()) {
       setCampaigns({
         ...campaigns,
         [newCampaignName]: []
@@ -46,6 +46,17 @@ const CampaignAnalytics = () => {
       setSelectedCampaign(newCampaignName);
       setNewCampaignName('');
       setShowNewCampaignInput(false);
+    }
+  };
+
+  const deleteCampaign = (campaignName) => {
+    if (window.confirm(`Sei sicuro di voler eliminare la campagna "${campaignName}" e tutto il suo storico?`)) {
+      const newCampaigns = { ...campaigns };
+      delete newCampaigns[campaignName];
+      setCampaigns(newCampaigns);
+      if (selectedCampaign === campaignName) {
+        setSelectedCampaign('');
+      }
     }
   };
 
@@ -135,16 +146,27 @@ const CampaignAnalytics = () => {
               <label className="block text-sm font-normal text-gray-600 mb-2">
                 Seleziona Campagna
               </label>
-              <select
-                value={selectedCampaign}
-                onChange={(e) => setSelectedCampaign(e.target.value)}
-                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-400 focus:border-blue-400 text-gray-700"
-              >
-                <option value="">Seleziona una campagna</option>
-                {Object.keys(campaigns).map(camp => (
-                  <option key={camp} value={camp}>{camp}</option>
-                ))}
-              </select>
+              <div className="flex gap-2">
+                <select
+                  value={selectedCampaign}
+                  onChange={(e) => setSelectedCampaign(e.target.value)}
+                  className="flex-1 px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-400 focus:border-blue-400 text-gray-700"
+                >
+                  <option value="">Seleziona una campagna</option>
+                  {Object.keys(campaigns).map(camp => (
+                    <option key={camp} value={camp}>{camp}</option>
+                  ))}
+                </select>
+                {selectedCampaign && (
+                  <button
+                    onClick={() => deleteCampaign(selectedCampaign)}
+                    className="px-3 py-3 bg-red-50 text-red-600 rounded-xl hover:bg-red-100 transition-colors"
+                    title="Elimina campagna"
+                  >
+                    <Trash2 size={18} />
+                  </button>
+                )}
+              </div>
             </div>
 
             <div>
