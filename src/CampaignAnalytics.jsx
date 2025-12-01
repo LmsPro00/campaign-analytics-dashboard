@@ -555,8 +555,11 @@ const CampaignAnalytics = () => {
                   />
                 </div>
 
-                <div className="md:col-span-3 mt-4 p-4 bg-blue-50 rounded-md">
-                  <p className="text-gray-600 text-xs font-normal mb-3">Metriche Calcolate Automaticamente</p>
+                <div className="md:col-span-3 mt-6 p-6 bg-gradient-to-br from-emerald-50 to-teal-50 rounded-2xl border-2 border-emerald-100">
+                  <div className="flex items-center gap-2 mb-4">
+                    <TrendingUp className="text-emerald-600" size={20} />
+                    <p className="text-gray-900 text-sm font-semibold">Metriche Calcolate Automaticamente</p>
+                  </div>
                   <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
                     <div>
                       <div className="text-gray-500 text-xs mb-0.5">CR Landing</div>
@@ -584,18 +587,23 @@ const CampaignAnalytics = () => {
               
               <button
                 onClick={addWeekData}
-                className="w-full px-4 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
+                className="w-full px-6 py-4 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-xl hover:from-green-700 hover:to-green-800 transition-all flex items-center justify-center gap-2 font-semibold text-lg shadow-lg hover:shadow-xl"
               >
-                <PlusCircle size={18} />
+                <PlusCircle size={20} />
                 Salva Settimana {currentCampaignData.length + 1}
               </button>
             </div>
 
-            <div className="bg-white rounded-2xl shadow-sm p-8">
-              <h2 className="text-xl font-semibold text-gray-900 mb-6 flex items-center gap-2">
-                <BarChart3 className="text-blue-600" size={20} />
-                Storico Settimane - {selectedCampaign}
-              </h2>
+            <div className="bg-white rounded-3xl shadow-lg p-8 card-hover">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="p-2 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-xl shadow-md">
+                  <BarChart3 className="text-white" size={22} />
+                </div>
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-900">Storico Settimane</h2>
+                  <p className="text-sm text-gray-600 font-medium">{selectedCampaign}</p>
+                </div>
+              </div>
               
               {currentCampaignData.length === 0 ? (
                 <div className="text-center py-20 text-gray-400">
