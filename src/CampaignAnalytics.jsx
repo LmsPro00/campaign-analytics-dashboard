@@ -284,13 +284,42 @@ const CampaignAnalytics = () => {
 
   return (
     <>
-      <div className="min-h-screen bg-gray-50">
-        <div className="max-w-5xl mx-auto px-6 py-8">
-        <div className="bg-white rounded-2xl shadow-sm p-8 mb-6">
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        * {
+          font-family: 'Inter', sans-serif;
+        }
+        
+        .card-hover {
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .card-hover:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        .input-modern {
+          transition: all 0.2s ease;
+        }
+        
+        .input-modern:focus {
+          transform: translateY(-1px);
+        }
+      `}</style>
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-100 py-8 px-4">
+        <div className="max-w-6xl mx-auto">
+        <div className="bg-white rounded-3xl shadow-lg p-8 mb-6 card-hover">
           <div className="flex items-center justify-between mb-8">
-            <div>
-              <h1 className="text-2xl font-semibold text-gray-900">Campaign Analytics</h1>
-              <p className="text-sm text-gray-500 mt-1">Monitora le performance delle tue campagne marketing</p>
+            <div className="flex items-center gap-3">
+              <div className="p-3 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl shadow-lg">
+                <BarChart3 className="text-white" size={28} />
+              </div>
+              <div>
+                <h1 className="text-3xl font-bold text-gray-900">Campaign Analytics</h1>
+                <p className="text-sm text-gray-600 mt-1 font-medium">Monitora le performance delle tue campagne marketing</p>
+              </div>
             </div>
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-2 px-3 py-2 bg-gray-100 rounded-lg">
@@ -299,79 +328,85 @@ const CampaignAnalytics = () => {
               </div>
               <button
                 onClick={handleLogout}
-                className="flex items-center gap-2 px-3 py-2 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+                className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 rounded-xl transition-all shadow-sm hover:shadow"
               >
-                <LogOut size={16} />
+                <LogOut size={18} />
                 Esci
               </button>
               <button
                 onClick={() => setShowAggregateModal(true)}
                 type="button"
-                className="flex items-center gap-2 px-4 py-2 text-sm bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+                className="flex items-center gap-2 px-5 py-2.5 text-sm font-semibold bg-gradient-to-r from-purple-600 to-purple-700 text-white rounded-xl hover:from-purple-700 hover:to-purple-800 transition-all shadow-md hover:shadow-lg"
               >
-                <Layers size={16} />
+                <Layers size={18} />
                 Aggrega i dati
               </button>
               <button
                 onClick={exportData}
-                className="flex items-center gap-2 px-4 py-2 text-sm text-gray-600 hover:text-gray-900 transition-colors"
+                className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-xl transition-all"
               >
-                <Download size={16} />
+                <Download size={18} />
                 Esporta
               </button>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label className="block text-sm font-normal text-gray-600 mb-2">
-                Seleziona Campagna
-              </label>
-              <div className="flex gap-2">
-                <select
-                  value={selectedCampaign}
-                  onChange={(e) => setSelectedCampaign(e.target.value)}
-                  className="flex-1 px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-400 focus:border-blue-400 text-gray-700"
-                >
-                  <option value="">Seleziona una campagna</option>
-                  {Object.keys(campaigns).map(camp => (
-                    <option key={camp} value={camp}>{camp}</option>
-                  ))}
-                </select>
-                {selectedCampaign && (
-                  <button
-                    onClick={() => deleteCampaign(selectedCampaign)}
-                    className="px-3 py-3 bg-red-50 text-red-600 rounded-xl hover:bg-red-100 transition-colors"
-                    title="Elimina campagna"
-                  >
-                    <Trash2 size={18} />
-                  </button>
-                )}
-              </div>
+          <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6 mb-6">
+            <div className="flex items-center gap-2 mb-4">
+              <Calendar className="text-blue-600" size={20} />
+              <h2 className="text-lg font-semibold text-gray-900">Gestione Campagne</h2>
             </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Seleziona Campagna
+                </label>
+                <div className="flex gap-2">
+                  <select
+                    value={selectedCampaign}
+                    onChange={(e) => setSelectedCampaign(e.target.value)}
+                    className="flex-1 px-4 py-3 bg-white border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 font-medium shadow-sm input-modern"
+                  >
+                    <option value="">Seleziona una campagna</option>
+                    {Object.keys(campaigns).map(camp => (
+                      <option key={camp} value={camp}>{camp}</option>
+                    ))}
+                  </select>
+                  {selectedCampaign && (
+                    <button
+                      onClick={() => deleteCampaign(selectedCampaign)}
+                      className="px-3 py-3 bg-red-50 text-red-600 rounded-xl hover:bg-red-100 transition-all shadow-sm hover:shadow"
+                      title="Elimina campagna"
+                    >
+                      <Trash2 size={18} />
+                    </button>
+                  )}
+                </div>
+              </div>
 
-            <div>
-              <label className="block text-sm font-normal text-gray-600 mb-2">
-                Nuova Campagna
-              </label>
-              {!showNewCampaignInput ? (
-                <button
-                  onClick={() => setShowNewCampaignInput(true)}
-                  className="w-full px-4 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
-                >
-                  <PlusCircle size={18} />
-                  Aggiungi Campagna
-                </button>
-              ) : (
-                <div className="flex gap-3">
-                  <input
-                    type="text"
-                    value={newCampaignName}
-                    onChange={(e) => setNewCampaignName(e.target.value)}
-                    placeholder="Nome campagna..."
-                    className="flex-1 px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-400 focus:border-blue-400 text-gray-700 placeholder-gray-400"
-                    onKeyPress={(e) => e.key === 'Enter' && addNewCampaign()}
-                  />
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Nuova Campagna
+                </label>
+                {!showNewCampaignInput ? (
+                  <button
+                    onClick={() => setShowNewCampaignInput(true)}
+                    className="w-full px-4 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all flex items-center justify-center gap-2 font-semibold shadow-md hover:shadow-lg"
+                  >
+                    <PlusCircle size={18} />
+                    Aggiungi Campagna
+                  </button>
+                ) : (
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={newCampaignName}
+                      onChange={(e) => setNewCampaignName(e.target.value)}
+                      placeholder="es. Marketing Senza Soldi"
+                      className="flex-1 px-4 py-3 bg-white border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-400 shadow-sm input-modern"
+                      onKeyPress={(e) => e.key === 'Enter' && addNewCampaign()}
+                      autoFocus
+                    />
                   <button
                     onClick={addNewCampaign}
                     className="px-5 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors"
@@ -391,126 +426,132 @@ const CampaignAnalytics = () => {
               )}
             </div>
           </div>
+          </div>
         </div>
 
         {selectedCampaign && (
           <>
-            <div className="bg-white rounded-2xl shadow-sm p-8 mb-6">
-              <h2 className="text-xl font-semibold text-gray-900 mb-6 flex items-center gap-2">
-                <Calendar className="text-blue-600" size={20} />
-                Aggiungi Dati Settimanali - {selectedCampaign}
-              </h2>
-              
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+            <div className="bg-white rounded-3xl shadow-lg p-8 mb-6 card-hover">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="p-2 bg-gradient-to-br from-green-500 to-green-600 rounded-xl shadow-md">
+                  <PlusCircle className="text-white" size={22} />
+                </div>
                 <div>
-                  <label className="block text-sm font-normal text-gray-600 mb-2">Settimana di Riferimento</label>
+                  <h2 className="text-2xl font-bold text-gray-900">Aggiungi Dati Settimanali</h2>
+                  <p className="text-sm text-gray-600 font-medium">{selectedCampaign}</p>
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Settimana di Riferimento</label>
                   <input
                     type="text"
                     value={weekData.weekReference}
                     onChange={(e) => setWeekData({...weekData, weekReference: e.target.value})}
                     placeholder="es. 18-24 Novembre"
-                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-400 focus:border-blue-400 text-gray-700 placeholder-gray-400"
+                    className="w-full px-4 py-3.5 bg-white border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-400 shadow-sm input-modern font-medium"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-normal text-gray-600 mb-2">Data</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Data</label>
                   <input
                     type="date"
                     value={weekData.date}
                     onChange={(e) => setWeekData({...weekData, date: e.target.value})}
-                    className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
+                    className="w-full px-4 py-3.5 bg-white border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 shadow-sm input-modern font-medium"
                   />
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-normal text-gray-600 mb-2">Budget Speso (€)</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Budget Speso (€)</label>
                   <input
                     type="number"
                     step="0.01"
                     value={weekData.budget}
                     onChange={(e) => setWeekData({...weekData, budget: e.target.value})}
                     placeholder="500"
-                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-400 focus:border-blue-400 text-gray-700 placeholder-gray-400"
+                    className="w-full px-4 py-3.5 bg-white border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-400 shadow-sm input-modern font-medium"
                   />
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-normal text-gray-600 mb-2">Click</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Click</label>
                   <input
                     type="number"
                     value={weekData.clicks}
                     onChange={(e) => setWeekData({...weekData, clicks: e.target.value})}
                     placeholder="250"
-                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-400 focus:border-blue-400 text-gray-700 placeholder-gray-400"
+                    className="w-full px-4 py-3.5 bg-white border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-400 shadow-sm input-modern font-medium"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-normal text-gray-600 mb-2">CTR Medio (%)</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">CTR Medio (%)</label>
                   <input
                     type="number"
                     step="0.01"
                     value={weekData.ctr}
                     onChange={(e) => setWeekData({...weekData, ctr: e.target.value})}
                     placeholder="2.5"
-                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-400 focus:border-blue-400 text-gray-700 placeholder-gray-400"
+                    className="w-full px-4 py-3.5 bg-white border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-400 shadow-sm input-modern font-medium"
                   />
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-normal text-gray-600 mb-2">Visualizzazioni Landing</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Visualizzazioni Landing</label>
                   <input
                     type="number"
                     value={weekData.landingViews}
                     onChange={(e) => setWeekData({...weekData, landingViews: e.target.value})}
                     placeholder="150"
-                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-400 focus:border-blue-400 text-gray-700 placeholder-gray-400"
+                    className="w-full px-4 py-3.5 bg-white border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-400 shadow-sm input-modern font-medium"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-normal text-gray-600 mb-2">Lead Generati</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Lead Generati</label>
                   <input
                     type="number"
                     value={weekData.leads}
                     onChange={(e) => setWeekData({...weekData, leads: e.target.value})}
                     placeholder="25"
-                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-400 focus:border-blue-400 text-gray-700 placeholder-gray-400"
+                    className="w-full px-4 py-3.5 bg-white border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-400 shadow-sm input-modern font-medium"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-normal text-gray-600 mb-2">Lead Unici Generati</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Lead Unici Generati</label>
                   <input
                     type="number"
                     value={weekData.uniqueLeads}
                     onChange={(e) => setWeekData({...weekData, uniqueLeads: e.target.value})}
                     placeholder="20"
-                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-400 focus:border-blue-400 text-gray-700 placeholder-gray-400"
+                    className="w-full px-4 py-3.5 bg-white border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-400 shadow-sm input-modern font-medium"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-normal text-gray-600 mb-2">Appuntamenti Presi</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Appuntamenti Presi</label>
                   <input
                     type="number"
                     value={weekData.appointments}
                     onChange={(e) => setWeekData({...weekData, appointments: e.target.value})}
                     placeholder="10"
-                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-400 focus:border-blue-400 text-gray-700 placeholder-gray-400"
+                    className="w-full px-4 py-3.5 bg-white border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-400 shadow-sm input-modern font-medium"
                   />
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-normal text-gray-600 mb-2">CPC Medio (€)</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">CPC Medio (€)</label>
                   <input
                     type="number"
                     step="0.01"
                     value={weekData.cpc}
                     onChange={(e) => setWeekData({...weekData, cpc: e.target.value})}
                     placeholder="2.00"
-                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-400 focus:border-blue-400 text-gray-700 placeholder-gray-400"
+                    className="w-full px-4 py-3.5 bg-white border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-400 shadow-sm input-modern font-medium"
                   />
                 </div>
 
