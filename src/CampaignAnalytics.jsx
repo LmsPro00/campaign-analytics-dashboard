@@ -213,7 +213,13 @@ const CampaignAnalytics = () => {
             </div>
             <div className="flex items-center gap-3">
               <button
-                onClick={() => setShowAggregateModal(true)}
+                onClick={() => {
+                  console.log('Click su Aggrega i dati');
+                  console.log('Campagne disponibili:', Object.keys(campaigns));
+                  console.log('showAggregateModal prima:', showAggregateModal);
+                  setShowAggregateModal(true);
+                  console.log('showAggregateModal dopo:', showAggregateModal);
+                }}
                 type="button"
                 className="flex items-center gap-2 px-4 py-2 text-sm bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
               >
@@ -550,6 +556,7 @@ const CampaignAnalytics = () => {
       </div>
 
       {/* Modale Aggregazione */}
+      {showAggregateModal && console.log('Rendering modale aggregazione')}
       {showAggregateModal && (
         <div 
           className="fixed inset-0 flex items-center justify-center p-4" 
