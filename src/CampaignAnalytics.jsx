@@ -310,7 +310,7 @@ const CampaignAnalytics = () => {
       `}</style>
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-100 py-12 px-4">
         <div className="max-w-6xl mx-auto">
-        <div className="bg-white rounded-2xl shadow-lg p-8 border border-slate-200 mb-8">
+        <div className="bg-white rounded-2xl shadow-lg p-8 border-0 mb-8">
           <div className="flex items-center justify-between mb-8">
             <div className="flex items-center gap-4">
               <div className="p-2.5 bg-blue-500 rounded-xl">
@@ -351,7 +351,7 @@ const CampaignAnalytics = () => {
             </div>
           </div>
 
-          <div className="bg-blue-50/50 rounded-xl p-6 mb-6 border border-blue-100">
+          <div className="bg-blue-50/50 rounded-xl p-6 mb-6 border-0">
             <div className="flex items-center gap-2 mb-4">
               <Calendar className="text-blue-600" size={18} />
               <h2 className="text-base font-medium text-slate-900">Gestione Campagne</h2>
@@ -431,7 +431,7 @@ const CampaignAnalytics = () => {
 
         {selectedCampaign && (
           <>
-            <div className="bg-white rounded-2xl shadow-lg p-8 border border-slate-200 mb-8">
+            <div className="bg-white rounded-2xl shadow-lg p-8 border-0 mb-8">
               <div className="flex items-center gap-3 mb-6">
                 <div className="p-2 bg-green-500 rounded-lg">
                   <PlusCircle className="text-white" size={20} />
@@ -450,7 +450,7 @@ const CampaignAnalytics = () => {
                     value={weekData.weekReference}
                     onChange={(e) => setWeekData({...weekData, weekReference: e.target.value})}
                     placeholder="es. 18-24 Novembre"
-                    className="w-full px-4 py-3 rounded-lg border-2 border-slate-200 focus:border-blue-500 focus:outline-none bg-slate-50 placeholder-slate-400"
+                    className="w-full px-4 py-3 rounded-lg border-0 focus:border-blue-500 focus:outline-none bg-slate-50 placeholder-slate-400"
                   />
                 </div>
 
@@ -472,7 +472,7 @@ const CampaignAnalytics = () => {
                     value={weekData.budget}
                     onChange={(e) => setWeekData({...weekData, budget: e.target.value})}
                     placeholder="500"
-                    className="w-full px-4 py-3 rounded-lg border-2 border-slate-200 focus:border-blue-500 focus:outline-none bg-slate-50 placeholder-slate-400"
+                    className="w-full px-4 py-3 rounded-lg border-0 focus:border-blue-500 focus:outline-none bg-slate-50 placeholder-slate-400"
                   />
                 </div>
                 
@@ -483,7 +483,7 @@ const CampaignAnalytics = () => {
                     value={weekData.clicks}
                     onChange={(e) => setWeekData({...weekData, clicks: e.target.value})}
                     placeholder="250"
-                    className="w-full px-4 py-3 rounded-lg border-2 border-slate-200 focus:border-blue-500 focus:outline-none bg-slate-50 placeholder-slate-400"
+                    className="w-full px-4 py-3 rounded-lg border-0 focus:border-blue-500 focus:outline-none bg-slate-50 placeholder-slate-400"
                   />
                 </div>
 
@@ -495,7 +495,7 @@ const CampaignAnalytics = () => {
                     value={weekData.ctr}
                     onChange={(e) => setWeekData({...weekData, ctr: e.target.value})}
                     placeholder="2.5"
-                    className="w-full px-4 py-3 rounded-lg border-2 border-slate-200 focus:border-blue-500 focus:outline-none bg-slate-50 placeholder-slate-400"
+                    className="w-full px-4 py-3 rounded-lg border-0 focus:border-blue-500 focus:outline-none bg-slate-50 placeholder-slate-400"
                   />
                 </div>
                 
@@ -506,7 +506,7 @@ const CampaignAnalytics = () => {
                     value={weekData.landingViews}
                     onChange={(e) => setWeekData({...weekData, landingViews: e.target.value})}
                     placeholder="150"
-                    className="w-full px-4 py-3 rounded-lg border-2 border-slate-200 focus:border-blue-500 focus:outline-none bg-slate-50 placeholder-slate-400"
+                    className="w-full px-4 py-3 rounded-lg border-0 focus:border-blue-500 focus:outline-none bg-slate-50 placeholder-slate-400"
                   />
                 </div>
 
@@ -517,7 +517,7 @@ const CampaignAnalytics = () => {
                     value={weekData.leads}
                     onChange={(e) => setWeekData({...weekData, leads: e.target.value})}
                     placeholder="25"
-                    className="w-full px-4 py-3 rounded-lg border-2 border-slate-200 focus:border-blue-500 focus:outline-none bg-slate-50 placeholder-slate-400"
+                    className="w-full px-4 py-3 rounded-lg border-0 focus:border-blue-500 focus:outline-none bg-slate-50 placeholder-slate-400"
                   />
                 </div>
 
@@ -528,7 +528,7 @@ const CampaignAnalytics = () => {
                     value={weekData.uniqueLeads}
                     onChange={(e) => setWeekData({...weekData, uniqueLeads: e.target.value})}
                     placeholder="20"
-                    className="w-full px-4 py-3 rounded-lg border-2 border-slate-200 focus:border-blue-500 focus:outline-none bg-slate-50 placeholder-slate-400"
+                    className="w-full px-4 py-3 rounded-lg border-0 focus:border-blue-500 focus:outline-none bg-slate-50 placeholder-slate-400"
                   />
                 </div>
 
@@ -539,7 +539,7 @@ const CampaignAnalytics = () => {
                     value={weekData.appointments}
                     onChange={(e) => setWeekData({...weekData, appointments: e.target.value})}
                     placeholder="10"
-                    className="w-full px-4 py-3 rounded-lg border-2 border-slate-200 focus:border-blue-500 focus:outline-none bg-slate-50 placeholder-slate-400"
+                    className="w-full px-4 py-3 rounded-lg border-0 focus:border-blue-500 focus:outline-none bg-slate-50 placeholder-slate-400"
                   />
                 </div>
                 
@@ -551,11 +551,11 @@ const CampaignAnalytics = () => {
                     value={weekData.cpc}
                     onChange={(e) => setWeekData({...weekData, cpc: e.target.value})}
                     placeholder="2.00"
-                    className="w-full px-4 py-3 rounded-lg border-2 border-slate-200 focus:border-blue-500 focus:outline-none bg-slate-50 placeholder-slate-400"
+                    className="w-full px-4 py-3 rounded-lg border-0 focus:border-blue-500 focus:outline-none bg-slate-50 placeholder-slate-400"
                   />
                 </div>
 
-                <div className="md:col-span-3 mt-6 p-5 bg-emerald-50/50 rounded-lg border border-emerald-100">
+                <div className="md:col-span-3 mt-6 p-5 bg-emerald-50/50 rounded-lg border-0">
                   <div className="flex items-center gap-2 mb-3">
                     <TrendingUp className="text-emerald-600" size={16} />
                     <p className="text-gray-700 text-sm font-medium">Metriche Calcolate Automaticamente</p>
@@ -594,7 +594,7 @@ const CampaignAnalytics = () => {
               </button>
             </div>
 
-            <div className="bg-white rounded-2xl shadow-lg p-8 border border-slate-200 mb-8">
+            <div className="bg-white rounded-2xl shadow-lg p-8 border-0 mb-8">
               <div className="flex items-center gap-3 mb-6">
                 <div className="p-2 bg-indigo-500 rounded-lg">
                   <BarChart3 className="text-white" size={20} />
