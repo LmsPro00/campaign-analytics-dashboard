@@ -559,15 +559,21 @@ const CampaignAnalytics = () => {
       {/* Modale Aggregazione con Portal */}
       {showAggregateModal && createPortal(
         <div 
-          className="fixed inset-0 flex items-center justify-center p-4" 
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setShowAggregateModal(false);
+          }}
           style={{ 
-            zIndex: 9999,
-            backgroundColor: 'rgba(0, 0, 0, 0.5)',
             position: 'fixed',
             top: 0,
             left: 0,
             right: 0,
-            bottom: 0
+            bottom: 0,
+            zIndex: 999999,
+            backgroundColor: 'rgba(0, 0, 0, 0.75)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '1rem'
           }}
         >
           <div 
