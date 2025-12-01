@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { PlusCircle, TrendingUp, TrendingDown, Calendar, BarChart3, Download, Sparkles, Trash2, Lightbulb, X } from 'lucide-react';
+import { PlusCircle, TrendingUp, TrendingDown, Calendar, BarChart3, Download, Sparkles, Trash2, X, Layers } from 'lucide-react';
 
 const CampaignAnalytics = () => {
   const [campaigns, setCampaigns] = useState({});
   const [selectedCampaign, setSelectedCampaign] = useState('');
   const [newCampaignName, setNewCampaignName] = useState('');
   const [showNewCampaignInput, setShowNewCampaignInput] = useState(false);
-  const [showInsights, setShowInsights] = useState(false);
-  const [insights, setInsights] = useState([]);
+  const [showAggregateModal, setShowAggregateModal] = useState(false);
+  const [aggregateConfig, setAggregateConfig] = useState({
+    name: '',
+    period: '',
+    selectedCampaigns: []
+  });
   
   const [weekData, setWeekData] = useState({
     weekReference: '',
@@ -62,52 +66,76 @@ const CampaignAnalytics = () => {
     }
   };
 
-  const generateInsights = (weekData, costPerLead, crLanding, appointmentRate, ctr, cpc) => {
-    const insights = [];
-    const crLandingNum = parseFloat(crLanding);
-    const appointmentRateNum = parseFloat(appointmentRate);
-    const ctrNum = parseFloat(weekData.ctr);
-    const cpcNum = parseFloat(weekData.cpc);
-    const cplNum = parseFloat(costPerLead);
-    
-    // Analisi CR Landing
-    if (crLandingNum < 5) {
-      insights.push({ type: 'warning', text: `CR Landing basso (${crLanding}%). Ottimizza la landing page: migliora il copy, aggiungi social proof e semplifica il form.` });
-    } else if (crLandingNum > 15) {
-      insights.push({ type: 'success', text: `Ottimo CR Landing (${crLanding}%)! La landing page sta convertendo molto bene.` });
+  const aggregateData = () => {
+    if (aggregateConfig.selectedCampaigns.length === 0 || !aggregateConfig.name || !aggregateConfig.period) {
+      alert('Compila tutti i campi per creare l\'aggregazione');
+      return;
     }
-    
-    // Analisi Tasso Presa Appuntamento
-    if (appointmentRateNum < 30) {
-      insights.push({ type: 'warning', text: `Tasso presa appuntamento basso (${appointmentRate}%). Considera di migliorare il follow-up o la qualifica dei lead.` });
-    } else if (appointmentRateNum > 50) {
-      insights.push({ type: 'success', text: `Eccellente tasso di presa appuntamento (${appointmentRate}%)! Il processo di conversione funziona bene.` });
+
+    // Raccogli tutti i dati delle campagne selezionate
+    const allWeeks = [];
+    aggregateConfig.selectedCampaigns.forEach(campName => {
+      if (campaigns[campName]) {
+        allWeeks.push(...campaigns[campName]);
+      }
+    });
+
+    if (allWeeks.length === 0) {
+      alert('Nessun dato disponibile nelle campagne selezionate');
+      return;
     }
-    
-    // Analisi CTR
-    if (ctrNum < 1.5) {
-      insights.push({ type: 'warning', text: `CTR basso (${weekData.ctr}%). Testa nuove creatività, headline più accattivanti o migliora il targeting.` });
-    } else if (ctrNum > 3) {
-      insights.push({ type: 'success', text: `CTR eccellente (${weekData.ctr}%)! Le tue ads stanno catturando bene l'attenzione.` });
-    }
-    
-    // Analisi CPC
-    if (cpcNum > 3) {
-      insights.push({ type: 'info', text: `CPC elevato (${weekData.cpc}€). Considera di ottimizzare il Quality Score o testare nuovi pubblici.` });
-    }
-    
-    // Analisi CPL
-    if (cplNum > 50) {
-      insights.push({ type: 'warning', text: `CPL alto (${costPerLead}€). Lavora su CTR, CR Landing e CPC per ridurre il costo per lead.` });
-    } else if (cplNum < 20) {
-      insights.push({ type: 'success', text: `CPL ottimo (${costPerLead}€)! Stai acquisendo lead in modo efficiente.` });
-    }
-    
-    if (insights.length === 0) {
-      insights.push({ type: 'info', text: 'Le metriche sono nella norma. Continua a monitorare e testare per migliorare ulteriormente.' });
-    }
-    
-    return insights;
+
+    // Calcola aggregazioni
+    const totalBudget = allWeeks.reduce((sum, w) => sum + parseFloat(w.budget || 0), 0);
+    const totalClicks = allWeeks.reduce((sum, w) => sum + parseFloat(w.clicks || 0), 0);
+    const totalLandingViews = allWeeks.reduce((sum, w) => sum + parseFloat(w.landingViews || 0), 0);
+    const totalLeads = allWeeks.reduce((sum, w) => sum + parseFloat(w.leads || 0), 0);
+    const totalUniqueLeads = allWeeks.reduce((sum, w) => sum + parseFloat(w.uniqueLeads || 0), 0);
+    const totalAppointments = allWeeks.reduce((sum, w) => sum + parseFloat(w.appointments || 0), 0);
+
+    // Medie
+    const avgCTR = (allWeeks.reduce((sum, w) => sum + parseFloat(w.ctr || 0), 0) / allWeeks.length).toFixed(2);
+    const avgCPC = (allWeeks.reduce((sum, w) => sum + parseFloat(w.cpc || 0), 0) / allWeeks.length).toFixed(2);
+
+    // Calcoli derivati
+    const costPerLead = totalLeads > 0 ? (totalBudget / totalLeads).toFixed(2) : '0.00';
+    const costPerUniqueLead = totalUniqueLeads > 0 ? (totalBudget / totalUniqueLeads).toFixed(2) : '0.00';
+    const costPerAppointment = totalAppointments > 0 ? (totalBudget / totalAppointments).toFixed(2) : '0.00';
+    const crLanding = totalLandingViews > 0 ? ((totalLeads / totalLandingViews) * 100).toFixed(2) : '0.00';
+    const appointmentRate = totalLeads > 0 ? ((totalAppointments / totalLeads) * 100).toFixed(2) : '0.00';
+
+    // Crea la campagna aggregata
+    const aggregatedWeek = {
+      weekReference: aggregateConfig.period,
+      date: new Date().toISOString().split('T')[0],
+      weekNumber: 1,
+      budget: totalBudget.toFixed(2),
+      clicks: totalClicks.toString(),
+      ctr: avgCTR,
+      cpc: avgCPC,
+      landingViews: totalLandingViews.toString(),
+      leads: totalLeads.toString(),
+      uniqueLeads: totalUniqueLeads.toString(),
+      appointments: totalAppointments.toString(),
+      costPerLead,
+      costPerUniqueLead,
+      costPerAppointment,
+      crLanding,
+      appointmentRate,
+      isAggregated: true,
+      sourceCampaigns: aggregateConfig.selectedCampaigns
+    };
+
+    // Salva come nuova campagna
+    const aggregateName = `📊 ${aggregateConfig.name}`;
+    setCampaigns({
+      ...campaigns,
+      [aggregateName]: [aggregatedWeek]
+    });
+
+    setSelectedCampaign(aggregateName);
+    setShowAggregateModal(false);
+    setAggregateConfig({ name: '', period: '', selectedCampaigns: [] });
   };
 
   const addWeekData = () => {
@@ -125,11 +153,6 @@ const CampaignAnalytics = () => {
     const costPerAppointment = appointments > 0 ? (budget / appointments).toFixed(2) : '0.00';
     const crLanding = landingViews > 0 ? ((leads / landingViews) * 100).toFixed(2) : '0.00';
     const appointmentRate = leads > 0 ? ((appointments / leads) * 100).toFixed(2) : '0.00';
-    
-    // Genera insights
-    const weekInsights = generateInsights(weekData, costPerLead, crLanding, appointmentRate, weekData.ctr, weekData.cpc);
-    setInsights(weekInsights);
-    setShowInsights(true);
     
     const newWeek = {
       ...weekData,
@@ -187,13 +210,22 @@ const CampaignAnalytics = () => {
               <h1 className="text-2xl font-semibold text-gray-900">Campaign Analytics</h1>
               <p className="text-sm text-gray-500 mt-1">Monitora le performance delle tue campagne marketing</p>
             </div>
-            <button
-              onClick={exportData}
-              className="flex items-center gap-2 px-4 py-2 text-sm text-gray-600 hover:text-gray-900 transition-colors"
-            >
-              <Download size={16} />
-              Esporta
-            </button>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setShowAggregateModal(true)}
+                className="flex items-center gap-2 px-4 py-2 text-sm bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+              >
+                <Layers size={16} />
+                Aggrega i dati
+              </button>
+              <button
+                onClick={exportData}
+                className="flex items-center gap-2 px-4 py-2 text-sm text-gray-600 hover:text-gray-900 transition-colors"
+              >
+                <Download size={16} />
+                Esporta
+              </button>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -422,41 +454,6 @@ const CampaignAnalytics = () => {
                 <PlusCircle size={18} />
                 Salva Settimana {currentCampaignData.length + 1}
               </button>
-
-              {showInsights && insights.length > 0 && (
-                <div className="mt-6 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-6 border border-blue-200 relative">
-                  <button
-                    onClick={() => setShowInsights(false)}
-                    className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
-                  >
-                    <X size={20} />
-                  </button>
-                  <div className="flex items-center gap-2 mb-4">
-                    <Lightbulb className="text-blue-600" size={24} />
-                    <h3 className="text-lg font-semibold text-gray-900">Consigli di Ottimizzazione</h3>
-                  </div>
-                  <div className="space-y-3">
-                    {insights.map((insight, index) => (
-                      <div
-                        key={index}
-                        className={`p-4 rounded-lg ${
-                          insight.type === 'success' ? 'bg-green-50 border border-green-200' :
-                          insight.type === 'warning' ? 'bg-yellow-50 border border-yellow-200' :
-                          'bg-blue-50 border border-blue-200'
-                        }`}
-                      >
-                        <p className={`text-sm ${
-                          insight.type === 'success' ? 'text-green-800' :
-                          insight.type === 'warning' ? 'text-yellow-800' :
-                          'text-blue-800'
-                        }`}>
-                          {insight.text}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
             </div>
 
             <div className="bg-white rounded-2xl shadow-sm p-8">
@@ -548,6 +545,115 @@ const CampaignAnalytics = () => {
           </>
         )}
       </div>
+
+      {/* Modale Aggregazione */}
+      {showAggregateModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b border-gray-200 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <Layers className="text-purple-600" size={24} />
+                <h2 className="text-xl font-semibold text-gray-900">Aggrega Dati Campagne</h2>
+              </div>
+              <button
+                onClick={() => setShowAggregateModal(false)}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <X size={24} />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-6">
+              <div>
+                <label className="block text-sm font-normal text-gray-600 mb-2">
+                  Nome Aggregazione
+                </label>
+                <input
+                  type="text"
+                  value={aggregateConfig.name}
+                  onChange={(e) => setAggregateConfig({...aggregateConfig, name: e.target.value})}
+                  placeholder="es. Q4 2024"
+                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-purple-400 focus:border-purple-400 text-gray-700 placeholder-gray-400"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-normal text-gray-600 mb-2">
+                  Periodo di Riferimento
+                </label>
+                <input
+                  type="text"
+                  value={aggregateConfig.period}
+                  onChange={(e) => setAggregateConfig({...aggregateConfig, period: e.target.value})}
+                  placeholder="es. Ottobre - Dicembre 2024"
+                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-purple-400 focus:border-purple-400 text-gray-700 placeholder-gray-400"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-normal text-gray-600 mb-3">
+                  Seleziona Campagne da Aggregare
+                </label>
+                <div className="space-y-2 max-h-60 overflow-y-auto border border-gray-200 rounded-xl p-4">
+                  {Object.keys(campaigns).filter(name => !name.startsWith('📊')).map(campName => (
+                    <label key={campName} className="flex items-center gap-3 p-3 hover:bg-gray-50 rounded-lg cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={aggregateConfig.selectedCampaigns.includes(campName)}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setAggregateConfig({
+                              ...aggregateConfig,
+                              selectedCampaigns: [...aggregateConfig.selectedCampaigns, campName]
+                            });
+                          } else {
+                            setAggregateConfig({
+                              ...aggregateConfig,
+                              selectedCampaigns: aggregateConfig.selectedCampaigns.filter(c => c !== campName)
+                            });
+                          }
+                        }}
+                        className="w-4 h-4 text-purple-600 rounded focus:ring-purple-500"
+                      />
+                      <span className="text-sm text-gray-700">{campName}</span>
+                      <span className="text-xs text-gray-400 ml-auto">
+                        {campaigns[campName].length} settiman{campaigns[campName].length === 1 ? 'a' : 'e'}
+                      </span>
+                    </label>
+                  ))}
+                </div>
+                <p className="text-xs text-gray-500 mt-2">
+                  {aggregateConfig.selectedCampaigns.length} campagn{aggregateConfig.selectedCampaigns.length === 1 ? 'a' : 'e'} selezionat{aggregateConfig.selectedCampaigns.length === 1 ? 'a' : 'e'}
+                </p>
+              </div>
+
+              <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
+                <p className="text-sm text-blue-800">
+                  <strong>Come funziona:</strong> I dati verranno aggregati sommando Budget, Click, Lead, ecc. 
+                  Le metriche percentuali (CTR, CPC) verranno calcolate come media. 
+                  Verrà creata una nuova campagna con tutti i dati aggregati consultabile come le altre.
+                </p>
+              </div>
+            </div>
+
+            <div className="p-6 border-t border-gray-200 flex gap-3">
+              <button
+                onClick={() => setShowAggregateModal(false)}
+                className="flex-1 px-4 py-3 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-colors"
+              >
+                Annulla
+              </button>
+              <button
+                onClick={aggregateData}
+                className="flex-1 px-4 py-3 bg-purple-600 text-white rounded-xl hover:bg-purple-700 transition-colors flex items-center justify-center gap-2"
+              >
+                <Layers size={18} />
+                Crea Aggregazione
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
